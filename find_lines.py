@@ -27,8 +27,6 @@ def cartesian_to_array(max_y, x1, y1):
 def set_rise_find_run(x1, y1, gradient, max_x, max_y): 
 	#Assume rise given start point, find run 
 	#gradient = rise/run
-
-	# print('set_rise_find_run')
 	up = False
 
 	if y1 == 0: #on the bottom
@@ -48,32 +46,20 @@ def set_rise_find_run(x1, y1, gradient, max_x, max_y):
 	
 	if up:
 		rise = max_y - y1 #going up, rise is the distance between max_y and y1
-		# print('going up')
 		y2 = max_y
 	else:
 		rise = -y1 #going down, rise is the height of y above 0
-		# print('going down')
 		y2 = 0
 
-	# print('rise is:')
-	# print(rise)
 	run = rise/gradient
-	# print('run is:')
-	# print(np.rint(run))
 	x2 = x1 + np.rint(run) 
 	if x2 >= 0 and x2 <= max_x:
 		return x2, y2
 	else:
-		# print('FAIL:')
-		# print('x2, y2:')
-		# print([x2,y2])
 		x2, y2 = set_run_find_rise(x1, y1, gradient, max_x, max_y)
 		return x2, y2
 
 def set_run_find_rise(x1, y1, gradient, max_x, max_y): 
-	# print('x1, y1:')
-	# print([x1,y1])
-	# print('set_run_find_rise')
 	right = False
 	if x1 == 0: #on the left
 		right = True
@@ -92,19 +78,12 @@ def set_run_find_rise(x1, y1, gradient, max_x, max_y):
 
 	if right:
 		run = max_x - x1 #going right, run is the difference between max_x and x
-		# print('going right')
 		x2 = max_x
 	else:
 		run = -x1 #going left, run is x1
-		# print('going left')
 		x2 = 0
 
-	# print('run is:')
-	# print(run)
 	rise = run*gradient
-	# print('rise is:')
-	# print(np.rint(rise))
-
 	y2 = y1 + np.rint(rise)
 	if y2 >= 0 and y2 <= max_y:
 		return x2, y2
@@ -113,8 +92,6 @@ def set_run_find_rise(x1, y1, gradient, max_x, max_y):
 		print('x2, y2:')
 		print([x2,y2])
 		sys.exit('end index out of bounds.')
-		# x2, y2 = set_rise_find_run(x1, y1, gradient, max_x, max_y)
-		# return x2, y2
 
 #Take gradient, row_distance => return the start indexes
 def get_start_indexes(gradient, row_distance, max_x, max_y):
@@ -133,19 +110,15 @@ def get_start_indexes(gradient, row_distance, max_x, max_y):
 		count = 0
 
 		for rows in range(1, max_y): # going up the left side
-			# print('ho')
 			if gradient < -1: #Then the problem side is the left
 
 				if count % abs(int(round(gradient))) == 0:
-				# if count % 5 == 0:
-					# print('here')
 					start_index = [max_y - rows,0]
 					start_indexes.append(start_index)
 			else:
 				start_index = [max_y - rows,0]
 				start_indexes.append(start_index)
 			count += 1
-		# sys.exit()
 		count = 0
 
 		for columns in range(max_x): # going right across the top
@@ -182,8 +155,6 @@ def get_start_indexes(gradient, row_distance, max_x, max_y):
 				start_indexes.append(start_index)
 			count += 1
 
-	# print('start_indexes:')
-	# print(start_indexes)
 	#the first and last indexes (eg. [0,0]) are purposfully not included as they are not needed for the get_line_indexes() algorithm
 	
 	return start_indexes 
@@ -201,8 +172,6 @@ def get_line_indexes(start_indexes, gradient, max_y, max_x):
 		line = [start_index, end_index]
 		line_indexes.append(line)
 
-	# print('line_indexes:')
-	# print(line_indexes)
 	return line_indexes	
 
 #given lines, find avg pixel value along lines
@@ -230,8 +199,6 @@ def get_line_values(line_indexes,img):
 #given the pixel values => output the locations of the maxima
 def get_line_locations(avg_pixel_values):
 	peaks = find_peaks_cwt(avg_pixel_values, np.arange(1, 10))
-	# print('peaks:')
-	# print(peaks)
 	return peaks
 
 
@@ -260,7 +227,6 @@ def write_found_lines(img, detected_lines):#Impose lines over the image and prin
 		axes.plot([x1, x2], [y1, y2], 'ro-')
 	axes.axis('off')
 	fig.savefig('found_lines.png', bbox_inches='tight')
-	# axes.axis('image')
 
 def plot_found_lines(img, detected_lines):
 	fig, axes = plt.subplots()
@@ -274,13 +240,10 @@ def plot_found_lines(img, detected_lines):
 	axes.axis('off')
 	# fig.savefig('found_lines.png', bbox_inches='tight')
 	axes.axis('image')
-
-	# Shift the line clockwise and anticlockwise, find the gradient with highest avg pixel value
 	
 def get_long_line(img, line_indexes, max_x, max_y):
 	#Get the first line that is longer than the shortest side 
 
-	# print(line_indexes)
 	len_indexes = len(line_indexes)
 	vertical = True
 	middle = list(range(int(round(len_indexes/3)),len_indexes - 10))
@@ -307,15 +270,7 @@ def get_long_line(img, line_indexes, max_x, max_y):
 		y2 = int(end_index[0])
 		
 		length = math.sqrt( abs(x1 - x2)*abs(x1 - x2) + abs(y1 - y2)*abs(y1 - y2) )
-		# length_list.append(length)
 		if length >= shortest_side:
-			# print('got one:')
-			# print(line)
-
-			#Plot found long line for checking
-			# plot_found_lines(img, [line])
-			# plt.show()
-
 			return line
 
 
@@ -325,15 +280,11 @@ def generate_points(point, max_x, max_y):
 
 	x1 = point[1]
 	y1 = point[0]
-	# print('x1')
-	# print(x1)
 	
 	y_points = list(range(y1 - pix_move, y1 + pix_move))
 	x_points = list(range(x1 - pix_move, x1 + pix_move))
 	y_points_filtered = []
 	x_points_filtered = []
-	# print(y_points)
-	# print(x_points)
 	for i in range(2*pix_move):
 		
 		if (0 < y_points[i] < max_y) and y_points[i] != y1:
@@ -344,13 +295,8 @@ def generate_points(point, max_x, max_y):
 		if (0 < x_points[j] < max_x) and x_points[j] != x1:
 			x_points_filtered.append(x_points[j])
 
-	# print('filtered:')
-	# print(y_points_filtered)
-	# print(x_points_filtered)
 	all_combinations = list(itertools.product(y_points_filtered, x_points_filtered))
-	# print('all_combinations')
-	# print(all_combinations)
-	# print(all_combinations)
+
 	return all_combinations
 
 
@@ -363,8 +309,6 @@ def improve_line(long_line, max_x, max_y, img):
 
 	num = 500
 	iterations = 80
-	# print('long_line:')
-	# print(long_line)
 	point1 = long_line[0]
 	point2 = long_line[1]
 	x1 = int(point1[1])
@@ -378,14 +322,10 @@ def improve_line(long_line, max_x, max_y, img):
 	zi = scipy.ndimage.map_coordinates(np.transpose(img), np.vstack((x,y))) 
 
 	original_avg_pixel_value = np.average(zi)
-	# print('original_avg_pixel_value of original:')
-	# print(original_avg_pixel_value)
 
 	points = []
 	points1 = generate_points(point1, max_x, max_y)
 	points2 = generate_points(point2, max_x, max_y)
-	# print('points1:')
-	# print(points1)
 
 	tested_lines = []
 	avg_pixel_values = []
@@ -394,8 +334,6 @@ def improve_line(long_line, max_x, max_y, img):
 			rand_point_1 = points1[randint(0, len(points1)-1)]
 		except:
 			print(points1)
-		# print('rand_point_1:')
-		# print(rand_point_1)
 		try:
 			rand_point_2 = points2[randint(0, len(points2)-1)]
 		except:
@@ -419,11 +357,7 @@ def improve_line(long_line, max_x, max_y, img):
 	index, best_pixel_value = max(enumerate(avg_pixel_values), key=operator.itemgetter(1))
 	improved_line = tested_lines[index]
 
-	print('best pixel value:')
-	print(best_pixel_value)
 	if best_pixel_value > original_avg_pixel_value:
-		# print('Improvement! :D')
-		# print(improved_line)
 
 		#Shift to cartesian coordinates
 		x1 = improved_line[0][1]
@@ -431,19 +365,12 @@ def improve_line(long_line, max_x, max_y, img):
 		x2 = improved_line[1][1]
 		y2 = max_y - improved_line[1][0]
 		improved_gradient = (y2 - y1)/(x2 - x1)
-		print('improved_gradient')
-		print(improved_gradient)
 		return improved_gradient
 	else:
 		print('No gradient improvement.')
 		return False
 
 def normalize(arr):
-    """
-    Linear normalization
-    http://en.wikipedia.org/wiki/Normalization_%28image_processing%29
-    """
-    # Do not touch the alpha channel
     for i in range(3):
         minval = arr[...,i].min()
         maxval = arr[...,i].max()
@@ -480,29 +407,17 @@ def get_filtered_lines(avg_pixel_values, peaks, pixel_value_cutoff,line_indexes)
 		return detected_lines, filtered_peaks
 
 
-
 def run_everything(img, gradient, row_distance, plot_line_find, pixel_value_cutoff):
 
 	img_shape = img.shape
 	max_y = img_shape[0]
 	max_x = img_shape[1]
 	
-
 	#gradient = tan(theta) of the angle from the positive x-axis, with theta in radians 
 	# gradient = np.tan(np.deg2rad(row_tilt)) 
-	print('rise/run:')
-	print(gradient)
-
-	# improve_gradient(gradient, max_y, max_x)
-	
 
 	start_indexes = get_start_indexes(gradient, row_distance, max_x, max_y)
 	line_indexes = get_line_indexes(start_indexes, gradient, max_y, max_x)
-	
-	# long_line, vertical = get_long_line(img, line_indexes, max_x, max_y)
-	# print(long_line)
-	# improved_gradient = improve_line(img, long_line, vertical)
-	
 	
 	avg_pixel_values = get_line_values(line_indexes,img)
 	peaks = get_line_locations(avg_pixel_values) #peaks contains the indices of the peak values 
@@ -510,12 +425,6 @@ def run_everything(img, gradient, row_distance, plot_line_find, pixel_value_cuto
 	# Need to remove peaks below a certain value
 	detected_lines, filtered_peaks = get_filtered_lines(avg_pixel_values, peaks, pixel_value_cutoff,line_indexes)
 
-	# plot_line_detection(avg_pixel_values, peaks)
-	# plot_found_lines(img, detected_lines)
-	# plt.show()
-	# sys.exit()
-	# print('detected_lines:')
-	# print(detected_lines)
 	long_line = get_long_line(img, detected_lines, max_x, max_y)
 	improved_gradient = improve_line(long_line, max_x, max_y, img)
 
@@ -529,8 +438,6 @@ def run_everything(img, gradient, row_distance, plot_line_find, pixel_value_cuto
 		# Need to remove peaks below a certain value
 		detected_lines, filtered_peaks = get_filtered_lines(avg_pixel_values, peaks, pixel_value_cutoff,line_indexes)
 
-	# write_found_lines(img, detected_lines)
-
 	if plot_line_find:
 		plot_line_detection(avg_pixel_values, filtered_peaks)
 		plot_found_lines(img, detected_lines)
@@ -542,32 +449,17 @@ def main_run():
 	row_tilt = -77.905
 	row_distance = 17.88
 
-	# img = plt.imread('../Media/big_image_512/71.png').astype(float)
-	# # print(img)
-	# row_tilt = -8.42697
-	# row_distance = 18.758
-
 	img_shape = img.shape
 	max_y = img_shape[0]
 	max_x = img_shape[1]
-	print('max_x:')
-	print(max_x)
-	print('max_y:')
-	print(max_y)
 
 	#gradient = tan(theta) of the angle from the positive x-axis, with theta in radians 
 	gradient = np.tan(np.deg2rad(row_tilt)) 
-	print('rise/run:')
-	print(gradient)
 
 	# improve_gradient(gradient, max_y, max_x)
 
 	start_indexes = get_start_indexes(gradient, row_distance, max_x, max_y)
 	line_indexes = get_line_indexes(start_indexes, gradient, max_y, max_x)
-	
-	# long_line, vertical = get_long_line(img, line_indexes, max_x, max_y)
-	# print(long_line)
-	# improved_gradient = improve_line(img, long_line, vertical)
 	
 	avg_pixel_values = get_line_values(line_indexes,img)
 	peaks = get_line_locations(avg_pixel_values) #peaks contains the indices of the peak values 
@@ -575,13 +467,6 @@ def main_run():
 	for peak in peaks:
 		detected_lines.append(line_indexes[peak])
 
-	# plot_line_detection(avg_pixel_values, peaks)
-	# plot_found_lines(img, detected_lines)
-	# plt.show()
-	# sys.exit()
-
-	# print('detected_lines:')
-	# print(detected_lines)
 	long_line = get_long_line(img, detected_lines, max_x, max_y)
 	improved_gradient = improve_line(long_line, max_x, max_y, img)
 
