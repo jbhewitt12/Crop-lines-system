@@ -17,7 +17,7 @@ The program first finds the angle of the crop rows using a 2D Fourier Transform.
 - matplotlib  
 
 ## To run on the example image:
-```
+```bash
 cd Crop-lines-system
 python run.py
 ```
